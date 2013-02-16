@@ -1,0 +1,14 @@
+from turtle import *
+
+screen = Screen()
+
+def g():
+    forward(10)
+    screen.ontimer(g, 100)
+
+running = True
+def f():
+    if running:
+        fd(50)
+        lt(60)
+        screen.ontimer(f, 250)

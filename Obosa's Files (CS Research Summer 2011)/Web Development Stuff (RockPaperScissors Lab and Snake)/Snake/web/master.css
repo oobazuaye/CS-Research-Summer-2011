@@ -1,0 +1,15 @@
+body {
+  background: #111;
+  color: white;
+  font-family: helvetica; }
+  body canvas {
+    border: solid 1px red; }
+  body #bar {
+    width: 400px; }
+  body #logo {
+    font-size: 1.4em; }
+  body #score_container {
+    float: right;
+    display: inline; }
+  body #pause_menu, body #restart_menu {
+    display: none; }

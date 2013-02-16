@@ -1,0 +1,50 @@
+changes to original game:
+-added timed appearance of random food, and timed disappearance of oldest food
+-added reverse function (activated by pressing 's')
+-added breadth-first search autonomous mode 
+ (activated by pressing 'a', cancelled by pressing one of the arrow keys)
+
+
+functions added:
+-reverse(): Reverses the snake, and moves it in the opposite direction.
+
+-removeFoodItem(): Removes the oldest food item on the screen.
+
+-isBody(point): Returns true if the inputted point is in the snake's body, 
+                returns false otherwise.
+
+-hasFoundNom(): If the snake has just made contact with food, 
+                this function returns true and the index of the newly eaten food
+                in the array containing the food items, returns false and 0 otherwise.
+
+-isVisited(point): Used in multiBFS. Returns true if the inputted point 
+                   has already been visited/checked in the current breadth-first search, 
+                   returns false otherwise.
+
+-isPath(point): Used in multiBFS. Returns true if the inputted point
+                is a part of the direct path discovered by the current breadth-first search, 
+                returns false otherwise.
+
+-isNom(point): Used in multiBFS. Returns true if the inputted point is food, 
+               returns false otherwise.
+
+-isBorder(point): Used in multiBFS. Returns true if the inputted point is on or beyond the border, 
+                  returns false otherwise.
+
+-isOpen(point): Used in multiBFS. Returns true if the inputted point is not on the border and 
+                not in the snake's Body, or if the inputted point is food. Returns false otherwise.
+
+-multiBFS(): Searches for the quickest path from the snake's head to the nearest food item, 
+             and returns the next direction the snake must turn to in order to follow the path,
+             in the form of a direction string 
+             ('up', 'down', 'left', 'right', or null if there is no path).
+
+-auto(): Makes the snake move autonomously using breadth-first search. 
+         If the snake gets trapped by its own body, it will reverse to keep moving. 
+         If the snake is still stuck after reversing, the game will declare that the game is over.
+
+
+Known issue(s):
+-game cannot be reset by pressing the "Restart" button 
+ (found by pressing "Pause", or by losing the game) if autonomous mode has been activated
+ at any time during the game. Instead, the user must refresh his or her browser window.

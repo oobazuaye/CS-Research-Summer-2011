@@ -1,0 +1,28 @@
+<html> 
+  <head> 
+    <title>Snake</title> 
+    <link href='/reset.css' rel='stylesheet'> 
+    <link href='/master.css' rel='stylesheet'> 
+    <script src='snake.js' type='text/javascript'></script> 
+  </head> 
+  <body onload='checkSupported();'> 
+    <div id='bar'> 
+      <span id='logo'>SNAKE</span> 
+      <div id='score_container'> 
+        Score:
+        <span id='score'>0</span> 
+      </div> 
+      <div id='play_menu'> 
+        <button onclick="pause();document.getElementById('play_menu').style.display='none';document.getElementById('pause_menu').style.display='block';">Pause</button> 
+      </div> 
+      <div id='pause_menu'> 
+        <button onclick="restart();document.getElementById('play_menu').style.display='block';document.getElementById('pause_menu').style.display='none';">Restart</button> 
+        <button onclick="play();document.getElementById('play_menu').style.display='block';document.getElementById('pause_menu').style.display='none';">Resume</button> 
+      </div> 
+      <div id='restart_menu'> 
+        <button onclick="restart();document.getElementById('play_menu').style.display='block';document.getElementById('restart_menu').style.display='none';">Restart</button> 
+      </div> 
+    </div> 
+    <canvas height='300' id='canvas' width='400'>    </canvas> 
+  </body> 
+</html> 

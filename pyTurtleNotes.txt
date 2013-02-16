@@ -1,0 +1,39 @@
+- Turning and Forward movement cannot be simultaneous.
+
+  - Should it just turn clockwise or counterclockwise
+    until the user prompts to move forward or backward again?
+    Or just move a small angle clockwise or counterclockwise, 
+    and then keep moving forward (current setting, it's nearly simultaneous)
+
+
+- Ray...
+
+   - Moving forward and drawing a ray cannot be simultaneous, 
+     so a continuous ray cannot exist.
+
+   - Can draw a ray for a split second when the angle is turned, 
+     so that we can see the robot's new direction, and then the 
+     robot can keep moving forward after the ray has disappeared.
+
+   - Should it be kept in? It slows it down a little, but it helps to see the direction
+     that the robot is moving in (we could always just set the robot to be an arrow though...)
+
+
+
+- Obstacles:
+
+  - Should I make the preset maps? Or should I try to make a way that the obstacles can be drawn in 
+    with mouseclicks before the user starts the robot moving?
+    The latter would be quite a bit more complicated, but...better?
+
+
+
+- Should the robot leave a trail, as it currently does?
+
+
+
+- Should I try to use states, like in previous version??
+  I currently have a few boolean global variables like "running1", "running2",
+  and "running3", which, depending on whether they are true or false, will
+  determine whether the robot is moving forward, backward, or autonomously
+  (respectively).

@@ -1,0 +1,168 @@
+#
+# main.py
+#
+
+import RobotCanvas
+import Tkinter
+import time
+import threading
+import random
+import Queue
+import math
+import sys
+from roombaSim import *
+        
+class Robot(ThreadedClient):
+    """
+    A class defining the graphical display and the behavior of
+    a Roomba-like robot (except that it has a range sensor!)
+    """
+    
+    def __init__(self, mapname):
+        """
+        This constructor delegates a couple graphics-specific things
+        to the ThreadedClient class
+        """
+        self.mapname = mapname
+        ThreadedClient.__init__(self, mapname)
+        
+        
+    def simulator(self):
+        """
+        This function gets called by the graphics.
+        The while loop is, in essence, the life of the robot.
+        Each time through the loop, you will want to 
+           * read the sensors
+           * decide on what action to take (if any)
+           * execute the current action
+        Then, it all begins again!
+        """
+	# pause for a second
+	time.sleep(1)
+        
+        # these constants represent different tasks
+        # the robot might be currently performing
+        STOP = 0
+        KBD = 1
+        TURN = 2
+        GO = 3
+        WANDER = 4
+        robotTask = KBD      # this is the starting state
+        
+        rangeHeading = 0.0   # where to point our range finder
+        
+        oldgoal = (0,0)      # the old goal
+        goal = (0,0)         # the current goal
+        
+        while True:          # run until you hit 'Q' in the window 
+                             # or control-c at the command prompt
+            
+            # Reading our sensors
+            #
+            # x is the x coordinate of the robot
+            # y is the y coordinate of the robot
+            # thd is the robot's heading, theta, in degrees
+            # bump is a list of two bump sensor readings: left and right
+            [x,y,thd], bump = self.getData()
+            #
+            # get the range to the walls at a particular heading
+            d = self.getRange(rangeHeading)   # in degrees
+            #
+            # thr is the robot's heading, theta, in radians
+            thr = math.radians(thd)       # nice of python to have this function
+            #
+            # get any keypresses and goal locations (mouse clicks)
+            #
+            kbd, goal = self.getWindowEvents()  # at start, kbd == '' and goal == (0,0)
+            if goal != oldgoal: 
+                # a new goal has been clicked - let's confirm this on the screen             
+                print 'New goal at x =', goal[0], 'and y =', goal[1]
+                self.showGoal( goal )           # displays the goal in green
+                oldgoal = goal                  # reset the old goal
+          
+                
+                
+            
+            
+            # Planning what to do next
+            #
+            # This stops if a bump is encountered
+            if bump[0] == True or bump[1] == True:
+                print 'BUMP!',
+                print '  [Left bump sensor:',  bump[0], ']  ',
+                print '  [Right bump sensor:', bump[1], ']  '
+                robotTask = STOP
+                
+            # you'll want to add more states!
+                
+            
+            
+            
+            
+            # Taking action (setting velocities)
+            #
+            # here, we decide how to set velocities,
+            # based on our current state
+            #
+            # the STOP state is for doing just that
+            #
+            if robotTask == GO:
+                self.setVels(40,0)
+                if x > goal[0]:
+                    robotTask = STOP
+                else:
+                    robotTask = GO
+                    
+            if robotTask == STOP:  
+                self.setVels(0,0)   # stop!
+                robotTask = KBD     # we've stopped, so let's return
+            # 
+            # the KBD state is for user-control
+            #
+            if robotTask == KBD:
+                # We allow keypresses to override or set our actions
+                #
+                if   kbd == 'r': 
+                    rangeHeading += 5
+                    if rangeHeading > 180: rangeHeading -= 360
+                elif kbd == 'R':
+                    rangeHeading -= 5
+                    if rangeHeading < -180: rangeHeading += 360
+                elif kbd == 'i': self.setVels(20,0)
+                elif kbd == 'k': self.setVels(-20,0)
+                elif kbd == 'j': self.setVels(20,40)
+                elif kbd == 'l': self.setVels(20,-40)
+                elif kbd == 'f':
+                    robotTask = GO
+                elif kbd == ' ': self.setVels(0,0)
+                
+            # special case to allow us to quit
+            if kbd == 'Q': break              # 'Q' quits the program
+            
+
+            # We pause to let the graphics catch up...
+            time.sleep(0.025) # 1/40 of a second
+               
+            
+        # if the while loop ends, we shutdown the gui, too. 
+        self.gui.shutdown()
+    
+            
+
+    
+if __name__ == '__main__':
+        
+    # you might try one of these maps:
+    MAPS = [ 'map0.txt', 
+             'map1.txt',
+             'map2rooms.txt',
+             'mapColors.txt',
+             'mapMaze.txt',
+             'mapHallways.txt',
+             'mapLibraComplex.txt' ]
+             
+    R = Robot(MAPS[2])
+    R.run()
+
+
+    

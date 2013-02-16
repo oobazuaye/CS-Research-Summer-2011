@@ -1,0 +1,4 @@
+import turtle
+import math
+
+turtle.setpos(x + math.cos(thr), y + math.sin(thr))

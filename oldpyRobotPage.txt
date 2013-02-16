@@ -1,0 +1,382 @@
+---++ The pyRobot Project
+
+---+++ Notes to make for 2011:
+
+   * motivate atan2 with an example
+   * modularize this & have students build particular pieces of functionality
+      * first, turn toward goal
+      * then minimize error
+      * minimize only x-error (or y-error)
+      * turn toward the nearest 90 degree multiple (super-useful!)
+      * angle computations: handling wrapping appropriately...
+
+---++ end of 2011 notes
+
+<img align=center src="http://www.cs.hmc.edu/~cs5grad/cs5/pyRobot.png" width ='450'>
+
+<!--
+
+---+++ Notes for 2010
+
+   * Have the provided code match x-coordinates using GOFOR with a particular _distance_ (time or odometry-checking...)
+   * Suggest writing a thd-matching state and then a y-coordinate matching state
+   * then suggest wall following...
+
+<br><br>
+
+-->
+
+---+++ Overview
+In this project you will program a simulated robot to navigate through its environment.
+
+The screenshot above shows the actors in this simulation.  The red circle is the robot.   The red line emanating from it is its laser rangefinder that can be pointed in any direction. The green circle is the goal point, which can be set by clicking with the <tt>g</tt> key held down. The walls are blue and the obstacles are black.
+
+At each time step, the robot senses its environment, including the distance it reads from its range sensor, its global position, and its bump sensors (in case it hits a wall). With that information, your program should decide on the appropriate task (or "state") for the robot to execute. Based on the robot's task or state, in turn, it should decide what velocity it should set for itself.
+
+---+++ Project Goal
+You should design and implement an algorithm that will successfully and repeatedly enable the virtual robot to navigate from its current location to a user-specified goal.  In particular, you may assume that the room will be rectangular and there will be some number of objects whose axes are parallel to the sides of the room.  Your robot must be able to autonomously navigate to the goal object, no matter where it is placed in the room.  You may assume that these rectangles will be separated by a "reasonable" distance from one another so that the goal object is always reachable!  
+
+There are many possible algorithms for reaching the goal.  Your algorithm does not need to follow the shortest possible path, but it should guarantee that it will always get the robot to the goal in a finite and reasonable amount of time. For example, random wandering is too slow and unreliable, and thus not a satisfactory solution.
+
+---+++ Getting Started
+
+Download and unzip the <a href="http://www.cs.hmc.edu/~cs5grad/cs5/pyRobot.zip">pyRobot.zip file from this link</a>.
+
+This package contains all the infrastructure that you will need.  
+The file that you will be altering is =main.py=.  *Do not alter the other support files.*
+
+You should be able to run this program by running =main.py= from IDLE. 
+
+Under our Mac OS X systems, it has worked well.
+
+---+++++ Running from the command line, esp. for Windows users
+
+In case, for some reason, the graphics do not work well - or tend to freeze - from IDLE on your computer, 
+you may run the program from the command line as shown below.  This happens more often on 
+Windows than Mac OS.
+
+To open a command-line interface in Windows, open a terminal via "Start" - "All Programs" -  "Accessories" - "Command Prompt". Under Mac OS, use the spotlight search for "Terminal."
+
+Once at the command line, use <tt>cd</tt> to change directory to your <tt>pyRobot</tt> folder -- if it's on the desktop, then the command<br><br>
+<tt>cd "c:\Documents and Settings\YourName\Desktop\pyRobot"</tt><br><br>
+where <tt>YourName</tt> is your Windows login name, should get you into the <tt>pyRobot</tt> folder. Then, if you're using Python 2.6, run 
+<br><br>
+<verbatim>
+>  C:\python27\python main.py
+</verbatim>
+from Mac OS X
+<verbatim>
+% python main.py
+</verbatim>
+You should see a window appear and the simulation will already be running...
+<br><br>
+
+---+++++ Running from the command line <i><b>in the LAC lab</b></i>
+
+<!-- (These instructions were tested 12/4/09 - if you run into trouble, you might see if there might be a CS 5 or other grutor that can help!) -->
+
+In the labs, download pyRobot (from the above link) to your desktop.
+
+Right-click on it and choose Extract All...
+
+Then, 
+
+Open a terminal by following from the "Start" button to "All Programs" to "Accessories" to "Command Prompt"
+
+You will see the prompt <tt>H:\></tt> in the command-line window. From there, you want to get into the pyRobot folder on your Desktop. To do this, you can type the commands you see in the screenshot below (be sure to replace my name with your login name!
+
+<br>
+<img src="%ATTACHURLPATH%/screenshotLAC.jpg" alt="screenshotLAC.jpg" width='1123' />
+<br>
+
+That last command runs Python on <tt>main.py</tt> and will bring up the window. 
+
+Hitting control-c in the command window will kill it. Also, if the focus in on the graphics window, typing capital Q will kill it.
+
+You can easily re-run that command (after typing it the first time) by hitting the up arrow (and then hitting enter).
+
+Note that you should <i><b>edit and save</b></i> the <tt>main.py</tt> file from IDLE in all the usual ways! Just don't use F5 -- rather, rerun your <tt>main.py</tt> by reusing the same command window as above.
+
+
+<br><br>
+
+---+++ How does the robot move?
+
+Your program can control only the <b><i>velocity</i></b> of the robot. The line
+
+<verbatim>
+self.setVels( 42.0, 0.42, noise )
+</verbatim>
+
+tells the robot to go 42.0 cm/second forward and 0.42 degrees per second counterclockwise: the arc of a big circle.
+
+Often you'll want to set only the translational (forward-back) velocity or the rotational velocity: you can always set the other to 0.0.
+
+<tt>noise</tt> is 0.0 by default and it's probably best to leave it that way while solving the problem (at least initially). Setting it to a non-zero value
+adds the "realism" that you can't really control the actual velocity of a robot, since the wheels slip against the floor, etc.
+
+<br><br>
+
+---+++ Play with the program!
+
+Start by playing with the program.  When you first invoke the program, you will be prompted to enter a map number.  There are three maps that we've
+supplied.  Map 0 is an empty room, map 1 has two rectangular obstacles, and map 2 has more obstacles.   
+
+Note that there will be at least two windows in use when you run the program.
+One is the robot simulation window.  Another is the IDLE or command line window where all of the print statements will be displayed.  You may
+also see a "Console" window which you can ignore. 
+
+Use the mouse to point to a location on the python robot window.  Hold the "g" key down and click with the mouse button.  This will set the position
+of the goal object.  *On the Macs, you may need to move the robot window around a bit before this will work correctly.*
+
+Now, drive the robot around manually.  Here are the keys that have been defined:
+
+   * "i" moves forward at top speed.
+   * "k" moves backward at top speed.
+   * The space key stops the robot.
+   * "j" rotates the robot counterclockwise at top rotational speed.
+   * "l" rotates the robot clockwise at top rotational speed.
+   * "r" rotates the laser rangefinder counterclockwise 5 degrees.
+   * "R" rotates the laser rangefinder clockwise 5 degrees.
+
+Notice that the laser rangefinder is fixed relative to the orientation of the robot.  So, as the robot turns, so does the rangefinder.  However,
+the rangefinder can also be turned without turning the robot itself (as you see when you use the "r" and "R" keys).  
+
+You will also notice that, at the moment, the robot can drive right over the goal object and the program won't detect it.
+
+*In order to stop the program* you can type "Q" in the robot simulation menu or Control-C or Control-D in the IDLE or command line window.  Some computers may not recognize one of these but should recognize the others.
+
+<br>
+
+---+++ Manual Control
+
+Take a look at the code in the file =main.py=.  It has quite a few comments that you should read carefully.
+You will notice that the robot has a set of states that are specified by numbers, but each state number is given a name as well.
+The starter code that we have provided has five states.  There is a variable called =robotTask= that keeps track of the current state of the robot. You might think of
+the robot state as its currently-executing subtask.
+
+This =robotTask= is initially 1 (also called =KBD=) indicating that the robot begins in a state in which it is being manually driven by a human user
+via the keyboard.
+
+The program enters an infinite loop (you'll see the =while True= statement that runs this loop).  Inside that loop, the simulator obtains the robot's current x and y coordinates, its heading (=thd=) in degrees, and the values of its bump sensors.  These sensors evaluate to =True= when they press up against a wall.  You'll see this a bit further down in the code.  
+
+Skip down to the part of the code with the line <pre>if robotTask == KBD</pre>
+
+The program begins with =state= equal to =KBD= so this condition will be =True= initially.  The variable =key= is the name of the key that was just pressed by the user (if a key was, in fact, pressed).  Notice that if the key was "i" then the command =self.setVels(FV, 0)= is invoked.  This sets the robot's forward velocity to =FV= the maximum permitted forward velocity.  Notice that =FV= was set earlier in the program to be the maximum forward velocity.
+The second argument of =setVels= is the rotational velocity for turning the robot.  Notice that =RV= was defined earlier in the code to be the maximum 
+rotational velocity.  When we press "j" or "l" we turn the robot counter-clockwise or clockwise, respectively.
+
+It is important to notice that once the robot's forward or turning velocity are set, the robot will keep moving according to these velocity values until
+some action is taken to change the robot's course.  In other words, the =self.setVels= command can be viewed as setting the robot's motors and these motors will maintain their velocity settings until the settings are changed by a later =self.setVels= command.
+
+In other words, the robot will continue moving according to its current velocity settings even if we were to somehow leave the =while= loop.  The =while= loop is only used to decide what state to enter next based on the robot's current location, sensor inputs, and possibly keyboard input.
+
+Finally, take a look at the other key presses that are defined for =KBD= state.  We can turn the laser rangefinder (without turning the robot!) using "r" and "R".
+Experiment with all of these manual controls and take a look at the corresponding code in the program so that you understand how this all works.  The "s" key does something special.  More on that next!
+
+<br>
+
+---+++ Autonomous Control
+
+Move the goal to some location other than it's initial default location (which is right at the origin where the robot starts).  To do this, move the mouse to the desired location and press the "g" key.  On a Mac, you may need to first move the robot window once or twice before this will work. Be sure to be holding the "g" key down before pressing the mouse button.
+
+Now, press the "s" key.  This begins the "search" routine. At the moment, it's a simple autonomous wanderer.
+
+Notice in the code that pressing "s" changes the state of the robot from =KBD= to the state =GO=, which, you will notice, is just another name for the number 3.  This is state 3, but giving it a meaningful name like =GO= is convenient.  
+
+Now the robot is in the =GO= state and NOT in the =KBD= state.  This means that pressing keyboard keys will not control the robot.  (However, pressing
+the space key will return the robot to the =KBD= state so that it is back under manual control.  Do you see where in the code we made this happen?).
+
+What happens in the =GO= state?  Take a look a bit further up in the code in the line that begins with
+<pre>if robotTask == GO</pre>
+
+Next time through the =while= loop, the robot will hit this statement and activate this piece of code.  In particular, it sets the rangefinder to point 0 degrees away from the heading of the robot (in other words, in the direction of the robot's movement).  It then checks to see if the robot has gotten close to a wall (the range distance is within 2 times the radius of the robot).  If so, it sets a rotational velocity and enters state =GOFOR=. Otherwise, it sends a message to the robot to move full speed ahead.
+
+Now for the =GOFOR= state.  This state simply allows the robot to run at its current velocity for a specific amount of time. The variable called =pause_stop= holds the deadline at which a state-change
+will happen. The variable =nextRobotTask= will be the state to enter after that time has elapsed.  
+
+Notice that <tt>GOFOR</tt>'s control code simply checks to see if the current time, =time.time()= has exceeded the time =pause_stop=.  If so, it sets the =robotTask= to =nextState= which will be =GO=.  
+
+<br>
+
+---+++ What You Will Do
+
+Thus, we have provided some very crude autonomous control through the =GO= and =GOFOR= states.  
+
+Your task is to design an algorithm
+that guides the robot to find the goal autonomously. Your approach should use a number of states -- but not so many that the code gets unmanageably complicated!
+
+Here are the requirements for your pyRobot program:
+
+   * Your program should *autonomously* (without the human driving it!) direct the robot to  reach any goal the user clicks on within the three provided maps.  In fact, your program should be sufficiently robust to direct the robot to the goal object in any room with rectangular obstacles whose edges are parallel to the room's walls and there the rectangles are spaced sufficiently far apart.  *We may test your robot on a different map than what we've provided you in order to ensure that your program is sufficiently general.*
+
+   * Your robot should start running autonomously when the user presses the "s" key.  
+
+   * The robot should stop and report that it has reached the goal when it has actually reached the goal.
+
+   * As it runs, your program <b>needs to print messages</b> that will help an onlooker understand what is going on. In particular, your program should keep the user aware of its current state as follows:
+      * Print a message whenever it changes state, i.e., its current subtask. The message should indicate the state that the robot is changing to. We have a starting point for this behavior already implemented in the initial code. </li>
+      * Print a message and stop when the robot gets within 16 units (the robot's radius in centimeters) from the goal location </li>
+      * Print any other messages that someone unfamiliar with your program might need to better understand what is happening. Though you should try not to flood the user with too many messages, it's better to err with too many than with too few.
+
+<br>
+
+---+++ A suggestion on how to start...
+
+To begin, you might consider adapting the <tt>GO</tt> robotTask so that it simply moves forward or backward until the robot is at approximately the same x-coordinate as the goal.
+
+It is <b>very</b> useful to print out the data that the robot is using as it runs! The vast majority of robot-behavior problems boil down to using data in a slightly different form than the program (or you!) expected.
+
+For reducing the x-coordinate error between robot and goal, it would be good to include the line
+
+<verbatim>
+print x - goal[0]
+</verbatim>
+
+within the overarching <tt>while True</tt> loop that runs the simulation.
+
+After your robot successfully gets within some margin of the goal's x-coordinate, you might stop and change to a state that will do the same for the y-coordinate...
+
+<br>
+
+---+++ A warning: beware of loops!
+
+Loops are good things -- but remember that the <tt>while True</tt> loop of the simulation <i><b>needs to run</b></i> in order for the robot and the graphics to update.
+
+Thus, it won't work to include a <tt>while</tt> (or a <tt>for</tt>) loop in your code that tries to wait until the robot completes a particular motion. Your loop will take control
+away from the surrounding <tt>while True</tt> loop, and neither the robot nor the graphics will get updated.
+
+Instead, take a look at the <tt>GOFOR</tt> state and use that (or similar approaches) to make motions of a definite length or angle.
+
+<br>
+
+---+++ A Note on Sensor Readings
+
+You'll notice in the simulator that we get the robot's x- and y-coordinates, its heading (=thd=) and, other sensor readings from the robot.
+You may be inclined to set these values.  However, these are sensor values that the robot obtains and *not* values that can actually be changed by simply assigning them values.  You can only change the robot's position by issuing movement commands through the =setVels= function, which sends information to the robot's motors.
+
+<br>
+
+---+++ No <tt>sleep</tt>ing!
+
+For this project, you should not use <tt>time.sleep</tt> in the simulator! First, this makes the simulator unresponsive to keyboard and mouse events. Second, by sleeping for the right amount of time, it is possible to "teleport" the robot to any place in the environment! This won't be realistic for a couple more centuries, so for this project you should use the  <tt>GOFOR</tt> state that is provided in order to perform an action for a set period of time. Feel free to modify or increase the number of states that use this technique - but don't use <tt>sleep</tt>.
+
+<br>
+
+---+++ A Note on Reducing the Number of States
+
+You may find that you need to implement many different states, some of which do more-or-less the same thing.  This is OK.  However, there are a number of ways of reducing the number of different states and keeping your code quite short and simple.  For example, some tasks may comprise a sequence of smaller tasks.  You might have a state for each small task.  Then, the big task could simply make a list of the smaller tasks that need to be performed to accomplish the big task.  The first small task would be removed from the list and executed.  When it is done being executed, the next state to be executed would be taken from that list!  By using lists of tasks, you can save quite a bit of coding. 
+
+<br>
+
+---+++ What to Submit for the Intermediate and Final Submissions
+
+There are two submission deadlines.  By the Intermediate Deadline on <font color=green><b>Sunday, December 6 at 11:59 PM</b></font> you should submit the following:
+
+   * A text file called =milestone.txt= containing:
+      * Your name (and your partner's name if this is a pair submission)
+      * The project that you've chosen (pyRobot in this case)
+      * A section entitled "Description of the Approach".  This section will normally be 2-3 paragraphs long. This section should describe, in detail, the process or "algorithm" that the robot will use to navigate from its starting point to the goal point (wherever that might be). Your plan should be general enough to handle any room with rectangular obstacle whose edges are parallel to the walls of the room and that are spaced sufficiently far apart.
+   * A file called =milestone.py= (renamed from <tt>main.py</tt>) that contains a working solution for map 0.  Your code might not implement your complete algorithm yet, but it should implement enough of your algorithm to handle any goal location in that map.
+   * A useful function in the <tt>math</tt> library is <tt>atan2</tt>. You might want to read about it by typing <tt>import math</tt> at the prompt and then entering <tt>help math.atan2</tt>.
+   * Submit your =milestone.txt= and =milestone.py= files as Homework 12 from the usual submissions page.  
+
+
+<font color=red><b>Final submissions are due by 5 PM on Friday, December 11.</b></font>
+
+For the <font color=red>final project</font> submission, you should submit the following:
+   * A text file called =final.txt= containing:
+      * Your name(s)
+      * The project that you've chosen
+      * "Description of the Approach".  This section will normally be a 2-3 paragraphs long.  The section should describe, in detail, how the robot will navigate from its starting point (wherever that might be) to the destination point (wherever that might be).  This might be a verbatim copy of the text that you wrote for the milestone, but it's likely that some changes were made between the milestone and the final project, and thus you are likely to have more thorough and detailed prose in this document.
+   * Your final python program (that works for all maps with rectangular obstacles parallel to the walls and sufficient space between these obstacles) in a file called =final.py=.  Again, this will be renamed from the original <tt>main.py</tt>.
+   * We will test your final program on the first three environments... if it works in even more difficult ones, such as the maze (index #4), let us know in your <tt>final.txt</tt> file!
+   *  Submit your files under Homework 12.
+
+Some notes about the design, implementation and testing of your code:
+   *  Design your code carefully.  It is highly recommended that you do this on paper first.  Make sure that your functions and classes encapsulate small logical components of your larger program.
+   *  Please be sure that you provide a docstring for _every_ function and method that you write.
+   *  Where your code is at all complex, please provide some comments in the code to explain what's happening.
+   *  Use good and descriptive variable names.
+   *  Avoid global variables except where they are absolutely necessary (and that's not very often!).
+   *  Avoid magic values!
+   *  Test your code thoroughly.
+
+
+<!--
+---+++++ Moving around via keyboard
+
+You should be able to run the robot around using the keyboard and you'll be able to change what keys do what.
+To begin with, the following keys have actions associated with them:
+<verbatim>
+ Q  - quit the program
+
+ i  - move forward
+ k  - move backward
+ l  - move right (compared to the robot's current heading)
+ j  - move left (compared to the robot's current heading)
+    - stop (spacebar!)
+
+ r  - turn the range sensor +5 degrees
+ R  - turn the range sensor -5 degrees
+</verbatim>
+
+---+++++ Setting the goal (the green dot)
+
+
+<b>Setting the goal</b> (the green dot)<br>
+You can set the goal by holding down the <tt>g</tt> key and clicking within the window. <i><font color=blue>On the Macintosh</font></i>, I have found that this may not work the first time and that I have to simply grab the title bar at the top 
+of the window (with title <i>Tk</i>) and drag/move the window a little bit. After that, setting the goal works fine. On windows machines, it seems to work immediately.
+
+
+<b>Printing a particular position</b><br>
+In addition, if you hold down the <tt>p</tt> key and click somehwere within the window, the global coordinates of the point you clicked will print at the console. The units are in centimeters.
+<br><br>
+
+
+---+++++ Scaling the window
+
+You can enlarge the window in the usual way. In addition, you can zoom in towards the robot and its environment (to enlarge the scene) by holding the shift key, clicking somewhere near the center, dragging outward (you should see a purple circle drag with you), and then releasing the mouse button.
+
+You can zoom out the same way, but by shift-clicking and dragging toward the center of the window, instead of away from it.
+
+Control-click recenters the window at the point clicked.
+
+
+---+++++ Moving around via your program
+
+The primary functions you'll want to use as you build your robot program are the following. First try running and reading the <tt>main.py</tt> file that is provided - it uses examples of these methods.
+You should not have to bother with any of the other Python files in the folder.
+<ul>
+<li> <tt> [x,y,thd], bump = self.getData() </tt> <font color=red>Input method #1</font> This call to <tt>getData</tt> returns the robot's current position <tt>(x,y)</tt> in global coordinates in cm. The <tt>thd</tt> is the current heading of the robot
+in degrees. The functions <tt>thr = math.radians(thd)</tt> and <tt>thd = math.degrees(thr)</tt> are handy for converting back and forth between degrees and radians. Finally, <tt>bump</tt> is a list of two boolean values. <tt>bump[0]</tt> is <tt>True</tt> if the left bump sensor is currently pressed, and <tt>bump[1]</tt> is True if the right bump sensor is being pressed. Otherwise both are <tt>False</tt>.
+</li>
+<li> <tt> d = self.getRange(rangeHeading) </tt> <font color=red>Input method #2</font> This method returns a distance <tt>d</tt> in centimeters to the closest surface (the goal point is not a surface) in the direction given by <tt>rangeHeading</tt>, in degrees.
+</li>
+<li> <tt> self.setVels( cmpersec, degpersec ) </tt> <font color=red>One output method</font> This method simply sets the robot's translational and rotational velocities in units of centimeters per second and degrees per second, respectively. Notice that there is no <i>setPosition</i> method (this is true of typical physical robots: you can set their velocities as you'd like, but you have to worry about achieving a certain position yourself - indeed, that's the key computational problem within this project!
+</li>
+</ul>
+
+
+---+++++ Suggestions on the state-machine strategy
+
+<b>A <i>state-machine</i> approach</b><br>
+One way to approach this problem is to divide up the robot's program into a number of separate behaviors, and then to deliberately switch between behaviors as the conditions warrant. To be consistent with the Picobot project, we will use the term <i>states</i> for these individual behaviors.
+
+For example, you might have the robot start in the <tt>KBD</tt>, or keyboard-control state.
+
+When the user presses a particular key, perhaps <tt>s</tt> (for <i>start</i>), you might have the state change to <tt>TURN</tt>. When in the <tt>TURN</tt> state, the robot will continuously rotate until it is facing the direction of its goal point within some margin of error. Watch out for angles wrapping around 360 degrees or 2*math.pi! Once the robot is close to facing the goal, perhaps it would enter the <tt>FORWARD</tt> state.
+
+When in the <tt>FORWARD</tt> state, the robot might simply move forward and monitor its forward-facing range sensor or its bump sensor. If it reaches the goal, great! If not, it might be from a number of causes. For one, the robot might have hit an obstacle before reaching the goal. (You will be able to determine this... we leave it to you to determine how!) In this case, you might want to enter a state that will start the robot <i>around</i> the obstacle. 
+
+There are many ways to string together these small behaviors into a strategy for reaching the goal whenever the goal is reachable. The guidelines below will help you (and us) understand what your code is doing as it runs!
+
+---+++++ Don't use <tt>sleep</tt>
+
+It is a bad idea to use <tt>sleep</tt> in the simulator! This is because it makes the simulator unresponsive to keyboard and mouse events. Instead, 
+you should use the <tt>GOFOR</tt> state that is provided in order to perform some action for a set period of time. Feel free to modify or increase
+the number of states that run for a fixed amount of time, if you wish.
+-->
+
+    
+

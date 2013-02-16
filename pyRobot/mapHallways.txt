@@ -1,0 +1,21 @@
+# map.txt
+# TYPE x1, y1, x2, y2, r, g, b, ...
+LINE  400  100    0  100     0     0   255
+LINE PREV         0  400     0     0   255
+LINE PREV       100  400     0     0   255
+LINE PREV       100  100     0     0   255
+LINE -100 -100 -100  600     0     0     0
+LINE PREV       200  600     0     0     0
+LINE PREV       200  200     0     0     0
+LINE PREV       300  200     0     0     0
+LINE PREV       300  400     0     0     0
+LINE PREV       500  600     0     0     0
+LINE PREV       600  600     0     0     0
+LINE PREV       600  400     0     0     0
+LINE PREV       400  400     0     0     0
+LINE PREV       400  200     0     0     0
+LINE PREV       500  200     0     0     0
+LINE PREV       500    0     0     0     0
+LINE PREV       100    0     0     0     0
+LINE PREV       100 -100     0     0     0
+LINE PREV      -100 -100     0     0     0

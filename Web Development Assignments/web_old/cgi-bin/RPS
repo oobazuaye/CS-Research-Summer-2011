@@ -1,0 +1,17 @@
+import random
+def RPS(mychoice):
+    choices = ['Rock', 'Paper', 'Scissors']
+    compchoice = random.choice(choices)
+    outcome = (mychoice, compchoice)
+    print compchoice
+    if mychoice == compchoice:
+        print 'You tie.'
+        return
+    if outcome == ('Rock', 'Scissors') or
+    ('Scissors', 'Paper') or ('Paper', 'Rock'):
+        print 'You win!'
+        return
+    else:
+        print 'You lose!'
+        return
+    
